@@ -1,0 +1,8 @@
+node_modules/*
+*.txt
+.env
+test/*
+migrations/*
+scripts/*
+.eslintrc.json
+truffle-config.js
