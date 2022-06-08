@@ -11,11 +11,14 @@ contract PFP is Ownable, ERC721, SignatureValidator {
     bool public released;
     address public controller;
     uint256 public maxMint;
+    string public baseURI;
 
     mapping (uint256 => bool) public controllerNonces;
 
-    constructor(string memory name_, string memory symbol_) ERC721(name_, symbol_) {
-        //super.constructor(name_, symbol_);
+    constructor(address controller_, uint maxMint_, string memory baseURI_, string memory name_, string memory symbol_) ERC721(name_, symbol_) {
+        baseURI = baseURI_;
+        maxMint = maxMint_;
+        controller = controller_;
     }
 
     function setPrice(uint256 price_) public onlyOwner {
@@ -34,9 +37,13 @@ contract PFP is Ownable, ERC721, SignatureValidator {
         controller = controller_;
     }
 
-    // function setBaseURI(string memory baseURI_) public onlyOwner {
-    //     _setBaseURI(baseURI_);
-    // }
+    function setBaseURI(string memory baseURI_) public onlyOwner {
+        baseURI = baseURI_;
+    }
+
+    function _baseURI() internal view override returns (string memory) {
+        return baseURI;
+    }
 
     function setContractURI(string memory contractURI_) public onlyOwner {
         contractURI = contractURI_;
@@ -55,12 +62,14 @@ contract PFP is Ownable, ERC721, SignatureValidator {
         require(msg.value >= price, "Insufficient funds");
         require(tokenId_ <= maxMint, "Token id invalid");
         require(!controllerNonces[nonce], "Invalid nonce");
-        require(verifyAuthorization(controller, msg.sender, tokenId_, nonce, authorization), "Invalid auth token");
         controllerNonces[nonce] = true;
-        _safeMint(msg.sender, tokenId_);
+        if (verifyAuthorization(controller, msg.sender, tokenId_, nonce, authorization)) {
+            _safeMint(msg.sender, tokenId_);
+        }
     }
 
     function ownerMint(address to, uint256 tokenId_) public onlyOwner {
+        require(tokenId_ <= maxMint, "Token id invalid");
         _safeMint(to, tokenId_);
     }
 
