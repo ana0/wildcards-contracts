@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./SignatureValidator.sol";
 
-contract PFP is Ownable, ERC721, SignatureValidator {
+contract Wildcards is Ownable, ERC721, SignatureValidator {
     uint256 public price;
     string public contractURI;
     bool public released;
