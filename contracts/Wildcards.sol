@@ -49,10 +49,6 @@ contract Wildcards is Ownable, ERC721, SignatureValidator {
         contractURI = contractURI_;
     }
 
-    // function setTokenURI(uint256 tokenId_, string memory tokenURI_) public onlyOwner {
-    //     _setTokenURI(tokenId_, tokenURI_);
-    // }
-
     function withdraw() public onlyOwner {
         bool sent = payable(owner()).send(address(this).balance);
         require(sent, "Failed to send Ether");

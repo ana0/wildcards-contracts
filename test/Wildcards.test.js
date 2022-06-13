@@ -57,6 +57,12 @@ contract('Wildcards', ([_, owner, attacker, sendingController, user]) => {
     (await wildcards.ownerOf(tokenId)).should.be.equal(owner);
   });
 
+  it('correctly sets baseUri for minted token', async () => {
+    await wildcards.setBaseURI(baseUri, { from: owner });
+    await wildcards.ownerMint(owner, tokenId, { from: owner });
+    (await wildcards.tokenURI(tokenId)).should.be.equal(`${baseUri}${tokenId}`);
+  });
+
   it('owner can mint token to anyone', async () => {
     await wildcards.ownerMint(user, tokenId, { from: owner });
     (await wildcards.ownerOf(tokenId)).should.be.equal(user);
@@ -99,6 +105,23 @@ contract('Wildcards', ([_, owner, attacker, sendingController, user]) => {
     await assertRevert(
       wildcards.transferFrom(user, owner, tokenId, { from: user }),
     );
+  });
+
+  it('user can transfer if released', async () => {
+    await wildcards.setController(signingController.address, { from: owner });
+
+    const localNonce = nonce;
+    const msg = await wildcards.getMessageHash(user, tokenId, nonce);
+
+    const auth = createAuthorization(msg);
+
+    await wildcards.mint(tokenId, localNonce, auth, { from: user });
+
+    await wildcards.setReleased(true, { from: owner });
+
+    await wildcards.transferFrom(user, owner, tokenId, { from: user });
+
+    (await wildcards.ownerOf(tokenId)).should.be.equal(owner);
   });
 
 });

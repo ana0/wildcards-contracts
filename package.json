@@ -1,5 +1,5 @@
 {
-  "name": "wildcards",
+  "name": "wildcards-contracts",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -17,7 +17,7 @@
     "@truffle/hdwallet-provider": "^2.0.8",
     "dotenv": "^16.0.1",
     "ganache-cli": "^6.12.2",
-    "truffle": "^5.5.16"
+    "truffle": "^5.5.18"
   },
   "devDependencies": {
     "chai": "^4.3.6",
